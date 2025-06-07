@@ -1,0 +1,186 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PlanWise - Day Planner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🗓️ PlanWise</h1>
+    <p class="tagline">Your daily task organizer</p>
+
+    <div class="form">
+      <input type="text" id="task-input" placeholder="Enter a new task..." />
+      <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <ul id="task-list"></ul>
+
+    <button id="clear-btn" onclick="clearTasks()">Clear All</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html><style>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f4f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+.tagline {
+  text-align: center;
+  color: #777;
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  padding: 0.6rem 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+#task-list {
+  list-style: none;
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#task-list li {
+  background: #f9f9f9;
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  border-left: 5px solid #007bff;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#task-list li span {
+  flex-grow: 1;
+}
+
+#task-list li button {
+  background: #dc3545;
+  padding: 0.4rem 0.6rem;
+  margin-left: 0.5rem;
+}
+
+#task-list li button.edit-btn {
+  background: #ffc107;
+}
+
+#clear-btn {
+  margin-top: 1rem;
+  width: 100%;
+  background: #6c757d;
+}</style><script>let tasks = JSON.parse(localStorage.getItem("planwise_tasks")) || [];
+
+function updateUI() {
+  const list = document.getElementById("task-list");
+  list.innerHTML = "";
+
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+
+    const span = document.createElement("span");
+    span.textContent = task;
+    
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✏️";
+    editBtn.classList.add("edit-btn");
+    editBtn.onclick = () => editTask(index);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "❌";
+    deleteBtn.onclick = () => deleteTask(index);
+
+    li.appendChild(span);
+    li.appendChild(editBtn);
+    li.appendChild(deleteBtn);
+    list.appendChild(li);
+  });
+
+  localStorage.setItem("planwise_tasks", JSON.stringify(tasks));
+}
+
+function addTask() {
+  const input = document.getElementById("task-input");
+  const task = input.value.trim();
+  if (task === "") {
+    alert("Task cannot be empty!");
+    return;
+  }
+
+  tasks.push(task);
+  input.value = "";
+  updateUI();
+}
+
+function editTask(index) {
+  const newTask = prompt("Edit your task:", tasks[index]);
+  if (newTask !== null && newTask.trim() !== "") {
+    tasks[index] = newTask.trim();
+    updateUI();
+  }
+}
+
+function deleteTask(index) {
+  tasks.splice(index, 1);
+  updateUI();
+}
+
+function clearTasks() {
+  if (confirm("Clear all tasks?")) {
+    tasks = [];
+    updateUI();
+  }
+}
+
+updateUI();</script>
